@@ -126,3 +126,59 @@ if __name__ == "__main__":
     # Report results
     successful = sum(1 for success in results if success)
     print(f"Done! Downloaded: {successful}/{len(ids_to_download)} shards to {DATA_DIR}")
+
+"""
+repackage 脚本 是把你的 TXT 变成 Parquet 的工厂。你只需要运行一次。
+dataset.py 是训练脚本调用的接口。它去读那些 Parquet 文件。
+关键点：确保 prepare_ipv6_parquet.py 里生成的 Parquet 文件中，列名必须叫 "text"，因为 dataset.py 里的 rg.column('text') 写死了要读这一列。
+"""
+
+# import os
+# import pyarrow.parquet as pq
+# from nanochat.common import get_base_dir
+
+# # 指向你刚才生成的目录
+# base_dir = get_base_dir()
+# DATA_DIR = os.path.join(base_dir, "base_data")
+
+# def list_parquet_files(data_dir=None):
+#     """ 列出所有 parquet 文件 """
+#     data_dir = DATA_DIR if data_dir is None else data_dir
+#     if not os.path.exists(data_dir):
+#         return []
+#     parquet_files = sorted([
+#         f for f in os.listdir(data_dir)
+#         if f.endswith('.parquet')
+#     ])
+#     return [os.path.join(data_dir, f) for f in parquet_files]
+
+# def parquets_iter_batched(split, start=0, step=1):
+#     """
+#     NanoChat 的标准接口。
+#     split="train": 读取除了最后一个之外的所有文件
+#     split="val": 只读取最后一个文件
+#     """
+#     parquet_paths = list_parquet_files()
+    
+#     if not parquet_paths:
+#         print(f"Warning: No data found in {DATA_DIR}")
+#         return
+
+#     # 简单的 train/val 切分逻辑
+#     if split == "train":
+#         files_to_read = parquet_paths[:-1] # 前面所有
+#     else:
+#         files_to_read = parquet_paths[-1:] # 最后一个
+
+#     for filepath in files_to_read:
+#         try:
+#             pf = pq.ParquetFile(filepath)
+#             # 按 row_group 迭代读取
+#             for rg_idx in range(start, pf.num_row_groups, step):
+#                 rg = pf.read_row_group(rg_idx)
+#                 texts = rg.column('text').to_pylist()
+#                 yield texts # 返回一个 list[str]，即一批 IP 地址
+#         except Exception as e:
+#             print(f"Error reading {filepath}: {e}")
+
+# # 删除所有的 download_single_file 和 main 函数，因为你不需要自动下载

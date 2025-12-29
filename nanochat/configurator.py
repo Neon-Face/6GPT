@@ -54,3 +54,9 @@ for arg in sys.argv[1:]:
             globals()[key] = attempt
         else:
             raise ValueError(f"Unknown config key: {key}")
+
+
+"""
+运行文件的时候可以直接用命令行参数覆盖
+你只能修改已有的变量。如果你想加一个新参数 use_bloom_filter=True, 你必须先在 chat_rl.py 的代码开头写上 use_bloom_filter = False (默认值), 然后才能通过命令行修改它.
+"""

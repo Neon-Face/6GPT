@@ -25,18 +25,26 @@ from nanochat.adamw import DistAdamW
 
 @dataclass
 class GPTConfig:
-    sequence_len: int = 1024
-    vocab_size: int = 50304
-    n_layer: int = 12
+    sequence_len: int = 1024  #sequence_len = 32  long enough for IPv6
+    vocab_size: int = 50304 #vocab_size = 65538
+    n_layer: int = 12 
     n_head: int = 6 # number of query heads
     n_kv_head: int = 6 # number of key/value heads (GQA)
     n_embd: int = 768
 
+# @dataclass
+# class GPTConfig:
+#     sequence_len: int = 1024  # 你的IPv6只有8个token，这里改成 16 或 32 就够了！
+#     vocab_size: int = 50304   # 这里改成 65538 (你的自定义分词器大小)
+#     n_layer: int = 12         # 层数。层数越多，理解越深，但越慢。Mac M3 建议 4-6 层。
+#     n_head: int = 6           # 注意力头数。就像有几个人同时在看这段数据。
+#     n_kv_head: int = 6        # GQA参数。如果小于 n_head，就是“分组查询注意力”，能省显存。
+#     n_embd: int = 768         # 嵌入维度。每个token变成多长的向量。建议 384 或 512。
 
 def norm(x):
     # Purely functional rmsnorm with no learnable params
-    return F.rms_norm(x, (x.size(-1),))
-
+    return F.rms_norm(x, (x.size(-1),)) 
+# 防止数值在神经网络传输过程中变得太大或太小，导致训练崩溃。这里用的是 RMSNorm（不带可学习参数），是目前最流行的做法。
 
 def apply_rotary_emb(x, cos, sin):
     assert x.ndim == 4  # multihead attention
@@ -47,6 +55,8 @@ def apply_rotary_emb(x, cos, sin):
     out = torch.cat([y1, y2], 3) # re-assemble
     out = out.to(x.dtype) # ensure input/output dtypes match
     return out
+# RoPE 是通过“旋转”向量的角度来表示位置关系。RoPE 能让模型完美理解 /48 和 /64 的相对位置。
+
 
 class CausalSelfAttention(nn.Module):
     def __init__(self, config, layer_idx):
@@ -62,6 +72,7 @@ class CausalSelfAttention(nn.Module):
         self.c_k = nn.Linear(self.n_embd, self.n_kv_head * self.head_dim, bias=False)
         self.c_v = nn.Linear(self.n_embd, self.n_kv_head * self.head_dim, bias=False)
         self.c_proj = nn.Linear(self.n_embd, self.n_embd, bias=False)
+        # 三个线性层 c_q (Query), c_k (Key), c_v (Value)。 把输入数据分别转换成“我想查什么(Q)”、“我有什么特征(K)”、“我的内容是什么(V)”。
 
     def forward(self, x, cos_sin, kv_cache):
         B, T, C = x.size()

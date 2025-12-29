@@ -270,6 +270,24 @@ while True:
                 sample, _ = engine.generate_batch(tokens, num_samples=1, max_tokens=16, temperature=0)
             print0(tokenizer.decode(sample[0]))
         model.train()
+    
+    # if master_process and (last_step or (step > 0 and step % sample_every == 0)):
+    #     model.eval()
+    #     # 给它一些开头，看它怎么续写
+    #     prompts = [
+    #         "2001:0db8", 
+    #         "2a00:1450", # Google
+    #         "2404:6800",
+    #     ]
+    #     engine = Engine(orig_model, tokenizer)
+    #     for prompt in prompts:
+    #         # 你的 tokenizer.encode 会自动处理这些字符串
+    #         tokens = tokenizer(prompt, prepend="<|bos|>")
+    #         with autocast_ctx:
+    #             # 只需要生成 8-10 个 token 就够了
+    #             sample, _ = engine.generate_batch(tokens, num_samples=1, max_tokens=10, temperature=0.8)
+    #         print0(f"Prompt: {prompt} -> Generated: {tokenizer.decode(sample[0])}")
+    #     model.train()
 
     # save checkpoint: at the end of the run, or every save_every steps, except at the first step or the resume step
     if last_step or (step > 0 and step != resume_from_step and save_every > 0 and step % save_every == 0):
