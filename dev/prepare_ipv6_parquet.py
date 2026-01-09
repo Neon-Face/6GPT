@@ -13,7 +13,7 @@ import pyarrow.parquet as pq
 from tqdm import tqdm
 
 # ================= CONFIGURATION =================
-INPUT_FILE = "../data/responsive-addresses.txt.xz"
+INPUT_FILE = "data/responsive-addresses.txt.xz"
 OUTPUT_DIR = os.path.expanduser("~/.cache/nanochat/base_data")
 TEMP_DIR = "data/temp_buckets" # 临时文件夹
 

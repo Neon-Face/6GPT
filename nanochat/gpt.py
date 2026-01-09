@@ -25,21 +25,12 @@ from nanochat.adamw import DistAdamW
 
 @dataclass
 class GPTConfig:
-    sequence_len: int = 1024  #sequence_len = 32  long enough for IPv6
-    vocab_size: int = 50304 #vocab_size = 65538
+    sequence_len: int = 32  #sequence_len = 32  long enough for IPv6
+    vocab_size: int = 65538 #vocab_size = 65538
     n_layer: int = 12 
     n_head: int = 6 # number of query heads
     n_kv_head: int = 6 # number of key/value heads (GQA)
     n_embd: int = 768
-
-# @dataclass
-# class GPTConfig:
-#     sequence_len: int = 1024  # 你的IPv6只有8个token，这里改成 16 或 32 就够了！
-#     vocab_size: int = 50304   # 这里改成 65538 (你的自定义分词器大小)
-#     n_layer: int = 12         # 层数。层数越多，理解越深，但越慢。Mac M3 建议 4-6 层。
-#     n_head: int = 6           # 注意力头数。就像有几个人同时在看这段数据。
-#     n_kv_head: int = 6        # GQA参数。如果小于 n_head，就是“分组查询注意力”，能省显存。
-#     n_embd: int = 768         # 嵌入维度。每个token变成多长的向量。建议 384 或 512。
 
 def norm(x):
     # Purely functional rmsnorm with no learnable params

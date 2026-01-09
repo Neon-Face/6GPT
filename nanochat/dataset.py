@@ -119,7 +119,6 @@ if __name__ == "__main__":
         except StopIteration:
             print("Val iterator is empty!")
 
-
 # """
 # The base/pretraining dataset is a set of parquet files.
 # This file contains utilities for:

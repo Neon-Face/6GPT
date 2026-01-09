@@ -1,5 +1,5 @@
 [project]
-name = "nanochat"
+name = "6gpt"
 version = "0.1.0"
 description = "the minimal full-stack ChatGPT clone"
 readme = "README.md"
@@ -9,6 +9,7 @@ dependencies = [
     "fastapi>=0.117.1",
     "files-to-prompt>=0.6",
     "psutil>=7.1.0",
+    "pybloom-live>=4.0.0",
     "regex>=2025.9.1",
     "setuptools>=80.9.0",
     "tiktoken>=0.11.0",
